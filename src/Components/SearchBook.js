@@ -31,7 +31,7 @@ function SearchBook({
           {query !== "" && QueryResults.length !== 0 ? (
             QueryResults.map((book) => (
               <li key={book.id}>
-                <Book book={book} handleShelfMove={handleShelfMove} />
+                <Book book={book} handleShelfMove={handleShelfMove} Category={book.shelf}/>
               </li>
             ))
           ) : (

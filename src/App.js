@@ -1,5 +1,4 @@
 import React from "react";
-// import * as BooksAPI from './BooksAPI'
 import "./App.css";
 import * as BooksAPI from "./BooksAPI";
 import BookShelf from "./Components/BookShelf";
@@ -13,13 +12,11 @@ class BooksApp extends React.Component {
     QueryResults: []
   };
 
-  componentDidMount = () => {
-    BooksAPI.getAll().then((books) => {
-      this.setState(() => ({
-        books,
-      }));
-      console.log(this.state);
-    });
+  async componentDidMount() {
+    const books = await BooksAPI.getAll()
+    this.setState(() => ({
+      books,
+    }));
   };
 
   changeBookShelf = (book, shelf) => {
@@ -33,6 +30,15 @@ class BooksApp extends React.Component {
     });
   };
 
+  processResults = (books) => {
+    this.setState({
+      QueryResults: books.map(book => {
+        const shelvedBook = this.state.books.find(existing => existing.id === book.id);
+        book.shelf = shelvedBook ? shelvedBook.shelf : 'none';
+        return book;
+      })
+    });
+  }
 
   handleSearchResults = (query) => {
     this.setState(() => ({
@@ -43,8 +49,7 @@ class BooksApp extends React.Component {
       BooksAPI.search(query)
         .then((data) => {
           if (typeof data !== 'undefined' && data.length > 0) {
-
-            this.setState(() => ({ QueryResults: data }));
+            this.processResults(data)
           }
         })
         .catch(this.setState(() => ({ QueryResults: [] })));
